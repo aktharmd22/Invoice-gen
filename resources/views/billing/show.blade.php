@@ -126,6 +126,7 @@
     <!-- Totals -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div class="flex justify-end">
+            @php $totalRefunded = $bill->returns->sum('total_refund'); @endphp
             <div class="w-full sm:w-80 space-y-2 text-sm">
                 <div class="flex justify-between text-gray-600">
                     <span>Subtotal (MRP × Qty)</span>
@@ -137,8 +138,18 @@
                 </div>
                 <div class="flex justify-between text-base font-bold text-gray-900 border-t border-gray-200 pt-2">
                     <span>Grand Total</span>
-                    <span class="text-gray-900">&#8377;{{ number_format($bill->grand_total, 2) }}</span>
+                    <span>&#8377;{{ number_format($bill->grand_total, 2) }}</span>
                 </div>
+                @if($totalRefunded > 0)
+                    <div class="flex justify-between text-red-600">
+                        <span>Returns Refunded</span>
+                        <span class="font-medium">- &#8377;{{ number_format($totalRefunded, 2) }}</span>
+                    </div>
+                    <div class="flex justify-between text-base font-bold text-gray-900 border-t border-gray-200 pt-2">
+                        <span>Net Amount</span>
+                        <span class="text-green-700">&#8377;{{ number_format($bill->grand_total - $totalRefunded, 2) }}</span>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

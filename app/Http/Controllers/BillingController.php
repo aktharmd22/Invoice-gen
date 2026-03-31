@@ -190,16 +190,20 @@ class BillingController extends Controller
 
     public function downloadPdf(Bill $billing)
     {
-        $billing->load('items');
+        $billing->load('items', 'returns.items.billItem');
+
+        $returnDays  = (int) Setting::get('return_days', 7);
+        $returnUntil = $billing->date->copy()->addDays($returnDays)->format('d M Y');
 
         $pdf = Pdf::loadView('pdf.invoice', [
-            'bill'        => $billing,
-            'shopName'    => Setting::get('shop_name',    'My Shop'),
-            'shopPhone'   => Setting::get('shop_phone',   ''),
-            'shopAddress' => Setting::get('shop_address', ''),
-            'shopMapsUrl' => Setting::get('shop_maps_url',''),
-            'shopInsta'   => Setting::get('shop_instagram',''),
-            'shopLogo'    => Setting::get('shop_logo',    ''),
+            'bill'         => $billing,
+            'shopName'     => Setting::get('shop_name',     'My Shop'),
+            'shopPhone'    => Setting::get('shop_phone',    ''),
+            'shopAddress'  => Setting::get('shop_address',  ''),
+            'shopMapsUrl'  => Setting::get('shop_maps_url', ''),
+            'shopInsta'    => Setting::get('shop_instagram',''),
+            'shopLogo'     => Setting::get('shop_logo',     ''),
+            'returnUntil'  => $returnUntil,
         ]);
         $pdf->setPaper('A4', 'portrait');
 

@@ -78,7 +78,7 @@
                                     </a>
                                     <a href="{{ route('billing.pdf', $bill) }}"
                                        class="text-gray-600 hover:text-gray-800 text-xs font-medium px-2.5 py-1 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                                        PDF
+                                        Download Bill
                                     </a>
                                     @if($bill->status !== 'fully_returned')
                                         <a href="{{ route('billing.edit', $bill) }}"

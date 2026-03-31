@@ -10,8 +10,11 @@
         <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Today</h2>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Sales</p>
-                <p class="text-2xl font-bold text-gray-800 mt-1">&#8377;{{ number_format($todaySales, 2) }}</p>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Net Sales</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">&#8377;{{ number_format($todaySales - $todayReturns, 2) }}</p>
+                @if($todayReturns > 0)
+                    <p class="text-xs text-red-400 mt-0.5">- &#8377;{{ number_format($todayReturns, 2) }} returned</p>
+                @endif
                 <div class="mt-2 w-8 h-1 bg-gray-500 rounded"></div>
             </div>
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
@@ -39,8 +42,11 @@
         <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">This Week</h2>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Sales</p>
-                <p class="text-2xl font-bold text-gray-800 mt-1">&#8377;{{ number_format($weekSales, 2) }}</p>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Net Sales</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">&#8377;{{ number_format($weekSales - $weekReturns, 2) }}</p>
+                @if($weekReturns > 0)
+                    <p class="text-xs text-red-400 mt-0.5">- &#8377;{{ number_format($weekReturns, 2) }} returned</p>
+                @endif
                 <div class="mt-2 w-8 h-1 bg-gray-500 rounded"></div>
             </div>
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
@@ -68,8 +74,11 @@
         <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">This Month</h2>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Sales</p>
-                <p class="text-2xl font-bold text-gray-800 mt-1">&#8377;{{ number_format($monthSales, 2) }}</p>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Net Sales</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">&#8377;{{ number_format($monthSales - $monthReturns, 2) }}</p>
+                @if($monthReturns > 0)
+                    <p class="text-xs text-red-400 mt-0.5">- &#8377;{{ number_format($monthReturns, 2) }} returned</p>
+                @endif
                 <div class="mt-2 w-8 h-1 bg-gray-500 rounded"></div>
             </div>
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
