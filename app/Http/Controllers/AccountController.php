@@ -79,6 +79,55 @@ class AccountController extends Controller
         return view('accounts.ledger', compact('entries', 'balances'));
     }
 
+    public function exportLedger(Request $request)
+    {
+        $query = LedgerEntry::orderBy('entry_date')->orderBy('id');
+
+        if ($request->filled('from')) $query->whereDate('entry_date', '>=', $request->from);
+        if ($request->filled('to'))   $query->whereDate('entry_date', '<=', $request->to);
+        if ($request->filled('type')) $query->where('type', $request->type);
+
+        $entries = $query->get();
+
+        // Calculate running balance
+        $openingBalance = 0;
+        if ($request->filled('from')) {
+            $openingBalance = LedgerEntry::whereDate('entry_date', '<', $request->from)
+                ->selectRaw("SUM(CASE WHEN type='credit' THEN amount ELSE -amount END) as bal")
+                ->value('bal') ?? 0;
+        }
+
+        $rows    = [];
+        $balance = $openingBalance;
+        foreach ($entries as $entry) {
+            $balance += $entry->type === 'credit' ? $entry->amount : -$entry->amount;
+            $rows[]   = [
+                $entry->entry_date->format('d M Y'),
+                ucfirst($entry->type),
+                ucfirst($entry->reference_type) . ' #' . $entry->reference_id,
+                $entry->description,
+                ($entry->type === 'credit' ? '+' : '-') . number_format($entry->amount, 2),
+                number_format($balance, 2),
+            ];
+        }
+
+        $filename = 'ledger-' . now()->format('Y-m-d') . '.csv';
+
+        $headers = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function () use ($rows) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['Date', 'Type', 'Reference', 'Description', 'Amount', 'Balance']);
+            foreach ($rows as $row) fputcsv($out, $row);
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function profitLoss(Request $request)
     {
         $tab = $request->get('tab', 'today');

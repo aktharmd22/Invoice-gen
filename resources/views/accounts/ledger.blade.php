@@ -36,8 +36,15 @@
 
     <!-- Table -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div class="px-5 py-4 border-b border-gray-100">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
             <h2 class="text-sm font-semibold text-gray-700">Ledger Entries <span class="text-gray-400 font-normal">({{ $entries->total() }})</span></h2>
+            <a href="{{ route('accounts.ledger.export', request()->only(['from','to','type'])) }}"
+               class="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/>
+                </svg>
+                Export CSV
+            </a>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm">

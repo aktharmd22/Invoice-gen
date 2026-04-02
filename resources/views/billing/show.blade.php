@@ -12,13 +12,22 @@
             <p class="text-xl font-mono font-bold text-gray-900">{{ $bill->bill_no }}</p>
         </div>
         <div class="flex flex-wrap gap-2">
-            <a href="{{ route('billing.pdf', $bill) }}"
-               class="flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-black text-white rounded-lg text-sm font-medium transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                PDF
-            </a>
+            @if($bill->payment_status === 'pending')
+                <span class="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-400 rounded-lg text-sm font-medium cursor-not-allowed" title="Confirm payment first">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    PDF Locked
+                </span>
+            @else
+                <a href="{{ route('billing.pdf', $bill) }}"
+                   class="flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-black text-white rounded-lg text-sm font-medium transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Download Bill
+                </a>
+            @endif
             @if($bill->status !== 'fully_returned')
                 <a href="{{ route('billing.edit', $bill) }}"
                    class="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg text-sm font-medium transition-colors">
@@ -81,8 +90,62 @@
                     {{ $bill->payment_method }}
                 </span>
             </div>
+            <div>
+                <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Payment Status</p>
+                @if($bill->payment_status === 'paid')
+                    <span class="mt-0.5 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                        ✓ Paid
+                    </span>
+                @else
+                    <span class="mt-0.5 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 animate-pulse">
+                        ● Pending
+                    </span>
+                @endif
+            </div>
         </div>
     </div>
+
+    @if($bill->payment_status === 'pending')
+    <!-- QR Payment Card -->
+    <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-6">
+        <div class="flex flex-col sm:flex-row items-center gap-6">
+            <div class="flex-shrink-0 text-center">
+                <div id="qrcode" class="inline-block p-3 bg-white rounded-xl shadow-sm border border-amber-200"></div>
+                <p class="mt-2 text-xs text-amber-700 font-medium">Scan to Pay via {{ $bill->payment_method }}</p>
+            </div>
+            <div class="flex-1 text-center sm:text-left">
+                <div class="flex items-center gap-2 justify-center sm:justify-start mb-2">
+                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span class="text-sm font-semibold text-amber-800">Awaiting Payment</span>
+                </div>
+                <p class="text-3xl font-bold text-gray-900 mb-1">&#8377;{{ number_format($bill->grand_total, 2) }}</p>
+                <p class="text-sm text-gray-500 mb-4">{{ $bill->customer_name }} &bull; {{ $bill->bill_no }}</p>
+                <form method="POST" action="{{ route('billing.confirm-payment', $bill) }}">
+                    @csrf
+                    <button type="submit"
+                            class="w-full sm:w-auto px-8 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm">
+                        ✓ Mark as Paid — Generate Bill
+                    </button>
+                </form>
+                <p class="mt-2 text-xs text-gray-400">Click after customer completes payment on their phone.</p>
+            </div>
+        </div>
+    </div>
+    @push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        const upiLink = "upi://pay?pa={{ urlencode($upiId) }}&pn={{ urlencode($shopName) }}&am={{ $bill->grand_total }}&tn={{ urlencode($bill->bill_no) }}&cu=INR";
+        new QRCode(document.getElementById("qrcode"), {
+            text: upiLink,
+            width: 160,
+            height: 160,
+            colorDark: "#111111",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+        });
+    </script>
+    @endpush
+    @endif
 
     <!-- Items Table (Internal View — shows MRP, discount, final) -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100">

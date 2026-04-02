@@ -12,14 +12,16 @@ class SettingController extends Controller
     public function index()
     {
         return view('settings.index', [
-            'shopName'     => Setting::get('shop_name',     'My Shop'),
-            'shopPhone'    => Setting::get('shop_phone',    ''),
-            'shopAddress'  => Setting::get('shop_address',  ''),
-            'shopMapsUrl'  => Setting::get('shop_maps_url', ''),
-            'shopInsta'    => Setting::get('shop_instagram', ''),
-            'shopLogo'     => Setting::get('shop_logo',     ''),
-            'shopFavicon'  => Setting::get('shop_favicon',  ''),
-            'returnDays'   => Setting::get('return_days',   '7'),
+            'shopName'      => Setting::get('shop_name',      'My Shop'),
+            'shopPhone'     => Setting::get('shop_phone',     ''),
+            'shopAddress'   => Setting::get('shop_address',   ''),
+            'shopMapsUrl'   => Setting::get('shop_maps_url',  ''),
+            'shopInsta'     => Setting::get('shop_instagram', ''),
+            'shopLogo'      => Setting::get('shop_logo',      ''),
+            'shopFavicon'   => Setting::get('shop_favicon',   ''),
+            'returnDays'    => Setting::get('return_days',    '7'),
+            'upiId'         => Setting::get('upi_id',         ''),
+            'upiQrEnabled'  => Setting::get('upi_qr_enabled', '0'),
         ]);
     }
 
@@ -36,12 +38,14 @@ class SettingController extends Controller
             'shop_favicon'  => 'nullable|image|mimes:png,ico,svg,webp|max:512',
         ]);
 
-        Setting::set('shop_name',     $request->shop_name);
-        Setting::set('shop_phone',    $request->shop_phone ?? '');
-        Setting::set('shop_address',  $request->shop_address ?? '');
-        Setting::set('shop_maps_url', $request->shop_maps_url ?? '');
-        Setting::set('shop_instagram',$request->shop_instagram ?? '');
-        Setting::set('return_days',   $request->return_days);
+        Setting::set('shop_name',      $request->shop_name);
+        Setting::set('shop_phone',     $request->shop_phone ?? '');
+        Setting::set('shop_address',   $request->shop_address ?? '');
+        Setting::set('shop_maps_url',  $request->shop_maps_url ?? '');
+        Setting::set('shop_instagram', $request->shop_instagram ?? '');
+        Setting::set('return_days',    $request->return_days);
+        Setting::set('upi_id',         $request->upi_id ?? '');
+        Setting::set('upi_qr_enabled', $request->has('upi_qr_enabled') ? '1' : '0');
 
         if ($request->hasFile('shop_logo')) {
             $oldLogo = Setting::get('shop_logo', '');

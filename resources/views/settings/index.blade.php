@@ -108,6 +108,28 @@
                 </div>
             </div>
 
+            {{-- UPI / GPay QR --}}
+            <div class="border-t border-gray-100 pt-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-800">GPay / UPI QR Payment</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Show a payment QR on the bill page. Admin must confirm payment before bill can be downloaded.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="upi_qr_enabled" value="1" class="sr-only peer"
+                               {{ old('upi_qr_enabled', $upiQrEnabled) == '1' ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-900 rounded-full peer peer-checked:bg-gray-900 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5"></div>
+                    </label>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">UPI ID</label>
+                    <input type="text" name="upi_id" value="{{ old('upi_id', $upiId) }}"
+                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                           placeholder="e.g. shopname@upi or 9876543210@ybl">
+                    <p class="mt-1 text-xs text-gray-400">This UPI ID is embedded in the payment QR code shown on the bill page.</p>
+                </div>
+            </div>
+
             <div class="flex justify-end pt-2 border-t border-gray-100">
                 <button type="submit"
                         class="px-8 py-2.5 bg-gray-900 hover:bg-black text-white rounded-lg text-sm font-semibold transition-colors shadow-sm">

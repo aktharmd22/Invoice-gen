@@ -57,6 +57,11 @@ class BillingController extends Controller
 
         [$subtotal, $totalDiscount, $grandTotal] = $this->calcTotals($request->items);
 
+        $paymentMethod  = $request->input('payment_method', 'Cash');
+        $qrEnabled      = Setting::get('upi_qr_enabled', '0') === '1';
+        $upiId          = Setting::get('upi_id', '');
+        $paymentStatus  = ($qrEnabled && $upiId && $paymentMethod !== 'Cash') ? 'pending' : 'paid';
+
         $bill = Bill::create([
             'bill_no'         => $request->bill_no,
             'customer_name'   => $request->customer_name,
@@ -65,7 +70,8 @@ class BillingController extends Controller
             'total_discount'  => $totalDiscount,
             'grand_total'     => $grandTotal,
             'status'          => 'active',
-            'payment_method'  => $request->input('payment_method', 'Cash'),
+            'payment_method'  => $paymentMethod,
+            'payment_status'  => $paymentStatus,
             'date'            => Carbon::today(),
         ]);
 
@@ -93,7 +99,11 @@ class BillingController extends Controller
     public function show(Bill $billing)
     {
         $billing->load('items', 'returns');
-        return view('billing.show', ['bill' => $billing]);
+        return view('billing.show', [
+            'bill'      => $billing,
+            'upiId'     => Setting::get('upi_id', ''),
+            'shopName'  => Setting::get('shop_name', 'My Shop'),
+        ]);
     }
 
     public function edit(Bill $billing)
@@ -190,8 +200,20 @@ class BillingController extends Controller
             ->with('success', 'Bill deleted successfully.');
     }
 
+    public function confirmPayment(Bill $billing)
+    {
+        $billing->update(['payment_status' => 'paid']);
+        return redirect()->route('billing.show', $billing)
+            ->with('success', 'Payment confirmed. Bill is ready.');
+    }
+
     public function downloadPdf(Bill $billing)
     {
+        if ($billing->payment_status === 'pending') {
+            return redirect()->route('billing.show', $billing)
+                ->with('error', 'Payment not yet confirmed. Please confirm payment first.');
+        }
+
         $billing->load('items', 'returns.items.billItem');
 
         $returnDays  = (int) Setting::get('return_days', 7);

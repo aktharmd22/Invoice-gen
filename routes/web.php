@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/billing/{billing}',       [BillingController::class, 'update'])->name('billing.update');
     Route::delete('/billing/{billing}',    [BillingController::class, 'destroy'])->name('billing.destroy');
     Route::get('/billing/{billing}/pdf',   [BillingController::class, 'downloadPdf'])->name('billing.pdf');
+    Route::post('/billing/{billing}/confirm-payment', [BillingController::class, 'confirmPayment'])->name('billing.confirm-payment');
 
     // Returns
     Route::get('/returns/create',          [ReturnController::class, 'create'])->name('returns.create');
@@ -47,6 +48,7 @@ Route::middleware('auth')->group(function () {
 
     // Accounts
     Route::get('/accounts/ledger',         [AccountController::class, 'ledger'])->name('accounts.ledger');
+    Route::get('/accounts/ledger/export',  [AccountController::class, 'exportLedger'])->name('accounts.ledger.export');
     Route::get('/accounts/profit-loss',    [AccountController::class, 'profitLoss'])->name('accounts.profit-loss');
 
     // Settings
