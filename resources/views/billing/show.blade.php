@@ -131,20 +131,6 @@
             </div>
         </div>
     </div>
-    @push('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script>
-        const upiLink = "upi://pay?pa={{ urlencode($upiId) }}&pn={{ urlencode($shopName) }}&am={{ $bill->grand_total }}&tn={{ urlencode($bill->bill_no) }}&cu=INR";
-        new QRCode(document.getElementById("qrcode"), {
-            text: upiLink,
-            width: 160,
-            height: 160,
-            colorDark: "#111111",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.M
-        });
-    </script>
-    @endpush
     @endif
 
     <!-- Items Table (Internal View — shows MRP, discount, final) -->
@@ -255,3 +241,28 @@
     @endif
 </div>
 @endsection
+
+@push('scripts')
+@if($bill->payment_status === 'pending')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function() {
+    var el = document.getElementById('qrcode');
+    if (!el) return;
+    var upiLink = 'upi://pay?pa=' + encodeURIComponent('{{ $upiId }}')
+                + '&pn=' + encodeURIComponent('{{ $shopName }}')
+                + '&am={{ $bill->grand_total }}'
+                + '&tn=' + encodeURIComponent('{{ $bill->bill_no }}')
+                + '&cu=INR';
+    new QRCode(el, {
+        text: upiLink,
+        width: 160,
+        height: 160,
+        colorDark: '#111111',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+    });
+})();
+</script>
+@endif
+@endpush
