@@ -23,23 +23,23 @@
             position: relative;
         }
 
-        /* ── WATERMARK (centre of page) ── */
+        /* ── WATERMARK (centre of content) ── */
         .watermark {
-            position: fixed;
+            position: absolute;
             top: 50%;
             left: 50%;
-            width: 220px;
-            height: 220px;
-            margin-top: -110px;
-            margin-left: -110px;
+            width: 320px;
+            height: 320px;
+            margin-top: -160px;
+            margin-left: -160px;
             text-align: center;
             z-index: 0;
             opacity: 0.05;
         }
-        .watermark img  { width: 220px; height: 220px; object-fit: contain; }
+        .watermark img  { width: 320px; height: 320px; object-fit: contain; }
         .watermark-text {
             font-family: 'DM Sans', sans-serif;
-            font-size: 72px;
+            font-size: 86px;
             font-weight: 800;
             letter-spacing: 8px;
             text-transform: uppercase;
@@ -485,6 +485,7 @@
                 <tr>
                     <th style="width:22px">#</th>
                     <th>Description</th>
+                    <th class="right" style="width:80px">Unit Price</th>
                     <th class="center" style="width:42px">Qty</th>
                     <th class="right" style="width:90px">Amount</th>
                 </tr>
@@ -494,6 +495,7 @@
                     <tr>
                         <td class="sno">{{ $i + 1 }}</td>
                         <td><span class="item-name">{{ $item->item_name }}</span></td>
+                        <td class="right" style="color:#888;">Rs. {{ number_format($item->original_price, 2) }}</td>
                         <td class="center">{{ $item->quantity }}</td>
                         <td class="right">Rs. {{ number_format($item->final_price, 2) }}</td>
                     </tr>
@@ -528,6 +530,11 @@
                     <div class="grand-val">Rs. {{ number_format($netAmount, 2) }}</div>
                 </div>
             </div>
+        </div>
+
+        {{-- ── PAYMENT METHOD ── --}}
+        <div style="margin-top:10px; text-align:right;">
+            <span style="font-family:'DM Sans',sans-serif; font-size:8px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#999; background:#f5f5f5; padding:4px 10px; border-radius:3px;">PAID VIA &nbsp;<span style="color:#111; font-size:10px; font-weight:900; letter-spacing:1px;">{{ strtoupper($bill->payment_method) }}</span></span>
         </div>
 
         {{-- ── AMOUNT IN WORDS ── --}}

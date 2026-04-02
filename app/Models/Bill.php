@@ -9,7 +9,7 @@ class Bill extends Model
     protected $fillable = [
         'bill_no', 'customer_name', 'phone',
         'subtotal', 'total_discount', 'grand_total',
-        'status', 'date',
+        'status', 'payment_method', 'date',
     ];
 
     protected $casts = ['date' => 'date'];

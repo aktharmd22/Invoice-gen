@@ -58,14 +58,15 @@ class BillingController extends Controller
         [$subtotal, $totalDiscount, $grandTotal] = $this->calcTotals($request->items);
 
         $bill = Bill::create([
-            'bill_no'        => $request->bill_no,
-            'customer_name'  => $request->customer_name,
-            'phone'          => $request->phone,
-            'subtotal'       => $subtotal,
-            'total_discount' => $totalDiscount,
-            'grand_total'    => $grandTotal,
-            'status'         => 'active',
-            'date'           => Carbon::today(),
+            'bill_no'         => $request->bill_no,
+            'customer_name'   => $request->customer_name,
+            'phone'           => $request->phone,
+            'subtotal'        => $subtotal,
+            'total_discount'  => $totalDiscount,
+            'grand_total'     => $grandTotal,
+            'status'          => 'active',
+            'payment_method'  => $request->input('payment_method', 'Cash'),
+            'date'            => Carbon::today(),
         ]);
 
         $this->syncItems($bill, $request->items);
@@ -152,6 +153,7 @@ class BillingController extends Controller
             'subtotal'       => $subtotal,
             'total_discount' => $totalDiscount,
             'grand_total'    => $grandTotal,
+            'payment_method' => $request->input('payment_method', $billing->payment_method),
         ]);
 
         // Sync customer record

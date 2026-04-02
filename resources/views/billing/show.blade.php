@@ -75,6 +75,12 @@
                     {{ ucwords(str_replace('_', ' ', $bill->status)) }}
                 </span>
             </div>
+            <div>
+                <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Payment</p>
+                <span class="mt-0.5 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                    {{ $bill->payment_method }}
+                </span>
+            </div>
         </div>
     </div>
 

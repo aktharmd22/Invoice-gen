@@ -18,7 +18,7 @@
                     <input type="hidden" name="bill_no" value="{{ $billNo }}">
                 </div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Customer Name <span class="text-red-500">*</span></label>
                     <input type="text" name="customer_name" value="{{ old('customer_name') }}" required
@@ -30,6 +30,17 @@
                     <input type="text" name="phone" value="{{ old('phone') }}" required
                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                            placeholder="e.g. 9876543210">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Payment Method <span class="text-red-500">*</span></label>
+                    <select name="payment_method"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-white">
+                        <option value="Cash" {{ old('payment_method') == 'Cash' ? 'selected' : '' }}>Cash</option>
+                        <option value="GPay" {{ old('payment_method') == 'GPay' ? 'selected' : '' }}>GPay</option>
+                        <option value="UPI"  {{ old('payment_method') == 'UPI'  ? 'selected' : '' }}>UPI</option>
+                        <option value="Card" {{ old('payment_method') == 'Card' ? 'selected' : '' }}>Card</option>
+                        <option value="Other"{{ old('payment_method') == 'Other'? 'selected' : '' }}>Other</option>
+                    </select>
                 </div>
             </div>
         </div>
